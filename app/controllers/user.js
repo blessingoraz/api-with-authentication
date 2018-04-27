@@ -29,7 +29,7 @@ exports.create = (req, res) => {
 exports.login = (req, res) => {
     User.findOne({ email: req.body.email }, (err, user) => {
         if (err) res.status(500).send({ message: `Cannot find user with email: ${req.body.email}` });
-        if (!user) return res.status(404).send('No user found.');
+        if (!user) res.status(404).send('No user found.');
         user.comparePassword(req.body.password, (err, isMatch) => {
             if (err || isMatch === false) res.status(500).send({ message: `You cannot login` });
             const token = jwt.sign({ id: user._id }, process.env.SECRET, {
