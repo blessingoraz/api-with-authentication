@@ -3,26 +3,26 @@ const jwt = require('jsonwebtoken');
 const validate = require('validator');
 
 exports.create = (req, res) => {
-    const user = new User(req.body);
+    let user = new User(req.body);
     const payload = {
         admin: user.admin,
         id: user._id
     };
-    const token = jwt.sign(payload, process.env.SECRET, {
-        expiresIn: 86400
-    });
+    const token = jwt.sign(payload, process.env.SECRET, { expiresIn: 86400 });
     user.token = token;
-    // console.log('user.email ====', user.email)
+
     if(!validate.isEmail(user.email))
-        return res.status(500).send({ message: 'Email is incorrect'});
+        res.send({ message: 'Email is incorrect' });
     //check if email exists in the db
-    User.findOne({ email: user.email}, (err, user) => {
-        if(err) return res.status(500).send({ message: `Problem registering with email: ${user.email}`});
-        if(user) return res.status(500).send({ message: `User with email ${user.email} already exist`});
-    }); 
-    user.save((err, user) => {
-        if(err) return res.status(500).send({ message: `Error creating user`});
-        return res.status(201).send(user)
+    User.findOne({ email: user.email}, (err, doc) => {
+        if (doc) {
+            res.send({ message: `User with email ${user.email} already exist` });
+        } else {
+            user.save((err, user) => {
+                if (err) res.send({ message: `Error creating user` });
+                res.send(user);
+            });
+        }
     });
 };
 
@@ -32,7 +32,7 @@ exports.login = (req, res) => {
         if (!user) return res.status(404).send('No user found.');
         user.comparePassword(req.body.password, (err, isMatch) => {
             if (err || isMatch === false) res.status(500).send({ message: `You cannot login` });
-            const token = jwt.sign({ id: user._id }, secret.secret, {
+            const token = jwt.sign({ id: user._id }, process.env.SECRET, {
                 expiresIn: 86400 // expires in 24 hours
             });
             user.token = token;
@@ -83,7 +83,7 @@ exports.update = (req, res) => {
             user.email = req.body.email;
 
             user.save((err, user) => {
-                if (err) res.status(500).send({ message: 'Cannot create a user' });
+                if (err) res.status(500).send({ message: 'Cannot update a user' });
                 res.send(user);
             });
         });

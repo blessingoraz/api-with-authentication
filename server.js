@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
 
 //add routes here
 require('./app/routes/user')(app);
-// require('./app/routes/note')(app);
+require('./app/routes/note')(app);
 
 app.listen(PORT, () => {
     console.log(`App is listening to PORT ${PORT}`);

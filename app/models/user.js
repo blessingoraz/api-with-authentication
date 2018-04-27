@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
     username: { type: String, required: true },
-    email: { type: String, required: true },
+    email: { type: String },
     password: { type: String, required: true },
     token: { type: String },
     admin: Boolean,
@@ -28,7 +28,7 @@ userSchema.pre('save', function (next) {
 //compare password for login
 userSchema.methods.comparePassword = function(incomingPassword, cb) {
     let user = this;
-    bcrypt.comparePassword(incomingPassword, user.password, function(err, isMatch) {
+    bcrypt.compare(incomingPassword, user.password, function(err, isMatch) {
         if(err) return cb(err);
         cb(null, isMatch);
     });
