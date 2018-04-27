@@ -31,8 +31,11 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
+    const token = req.headers['x-access-token'];
+    if (!token) res.status(401).send({ auth: false, message: 'No token provided.' });
+
     jwt.verify(token, process.env.SECRET, (err, decoded) => {
-        if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+        if (err) res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
         Note.where('create_by').equals(req.params.userId).exec((err, notes) => {
             if (err) res.status(500).json({message: 'Cannot retrieve notes'});
             res.json(notes);
@@ -41,8 +44,11 @@ exports.findAll = (req, res) => {
 };
 
 exports.update = (req, res) => {
+    const token = req.headers['x-access-token'];
+    if (!token) res.status(401).send({ auth: false, message: 'No token provided.' });
+
     jwt.verify(token, process.env.SECRET, (err, decoded) => {
-        if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+        if (err) res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
 
         Note.where('create_by').equals(req.params.userId).exec((err, note) => {
             if (err) res.status(500).json({message: 'Cannot retrieve notes'});
@@ -60,8 +66,11 @@ exports.update = (req, res) => {
 };
 
 exports.delete = (req, res) => {
+    const token = req.headers['x-access-token'];
+    if (!token) res.status(401).send({ auth: false, message: 'No token provided.' });
+
     jwt.verify(token, process.env.SECRET, (err, decoded) => {
-        if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+        if (err) res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
 
         Note.where('create_by').equals(req.params.userId).exec((err, note) => {
             if (err) res.status(500).json({message: 'Cannot retrieve notes'});

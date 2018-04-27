@@ -8,6 +8,6 @@ module.exports = (app) => {
 
     app.put('/api/user/:userId/notes/:noteId', VerifyToken, note.update);
 
-    app.delete('/api/nuser/:userId/notes/:noteId', VerifyToken, note.delete);
+    app.delete('/api/user/:userId/notes/:noteId', VerifyToken, note.delete);
 };
 
