@@ -26,6 +26,6 @@ app.get('/', (req, res) => {
 require('./app/routes/user')(app);
 require('./app/routes/note')(app);
 
-app.listen(PORT, () => {
+app.listen(process.env.PORT || PORT, () => {
     console.log(`App is listening to PORT ${PORT}`);
 });
